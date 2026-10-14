@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Kendali - Exemplar &amp; Panduan Tugas BDR</title>
+    <meta name="description" content="Contoh acuan (master sample) dan lembar kerja interaktif mata pelajaran Sistem Kendali untuk Belajar Dari Rumah (BDR) saat bencana kabut asap, lengkap dengan simulator Smart Air Quality Control System.">
+    <meta name="author" content="Sistem Kendali BDR">
+    <meta name="theme-color" content="#f59e0b">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Sistem Kendali - Exemplar &amp; Panduan Tugas BDR">
+    <meta property="og:description" content="Exemplar dan lembar kerja interaktif Sistem Kendali untuk BDR saat kabut asap, lengkap dengan simulator live.">
+    <meta property="og:locale" content="id_ID">
+    <meta name="twitter:card" content="summary">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for live simulation graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS SDK + local config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        air: {
+                            good: '#10b981',
+                            moderate: '#f59e0b',
+                            unhealthy: '#ef4444',
+                            hazardous: '#8b5cf6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbars and pulse animations */
+        @keyframes fanSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-fan-fast {
+            animation: fanSpin 0.3s linear infinite;
+        }
+        .animate-fan-slow {
+            animation: fanSpin 1.2s linear infinite;
+        }
+        .animate-fan-off {
+            transform: rotate(0deg);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+    <!-- BDR Emergency Header Banner -->
+    <header class="bg-amber-500 text-slate-900 shadow-md sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-medium">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center justify-center p-1.5 bg-amber-600 text-white rounded-full animate-pulse">
+                    <i class="fa-solid fa-smog text-xs"></i>
+                </span>
+                <span><strong>Pemberitahuan BDR Kabut Asap:</strong> Pembelajaran Dilakukan Secara Daring/Mandiri Karena Kualitas Udara Berbahaya. Tetap di Dalam Rumah & Gunakan Masker!</span>
+            </div>
+            <div class="flex items-center gap-3 ml-auto">
+                <span class="bg-amber-600/30 px-2.5 py-1 rounded-md text-amber-950 font-semibold">Mapel Pilihan: Sistem Kendali</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-[41px] z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 font-bold text-xl">
+                    SK
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-base sm:text-lg leading-tight">Portofolio & Modul Sistem Kendali</h1>
+                    <p class="text-xs text-slate-500">Contoh Acuan Tugas Siswa Belajar Dari Rumah (BDR)</p>
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center gap-1 font-medium text-sm text-slate-600">
+                <a href="#instruksi" class="px-3 py-2 rounded-lg hover:text-emerald-600 hover:bg-slate-100 transition">Instruksi Tugas</a>
+                <a href="#contoh-master" class="px-3 py-2 rounded-lg hover:text-emerald-600 hover:bg-slate-100 transition">Contoh Hasil (Master Sample)</a>
+                <a href="#simulasi" class="px-3 py-2 rounded-lg hover:text-emerald-600 hover:bg-slate-100 transition">Simulasi Interaktif</a>
+                <a href="#lembar-kerja" class="px-3 py-2 rounded-lg hover:text-emerald-600 hover:bg-slate-100 transition">Lembar Kerja Siswa</a>
+                <a href="#dashboard" class="px-3 py-2 rounded-lg hover:text-emerald-600 hover:bg-slate-100 transition">Dashboard Kelas</a>
+            </div>
+
+            <!-- Mode Toggle: Interactive Page vs Flyer View -->
+            <button id="toggleViewBtn" onclick="toggleViewMode()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all duration-200 hover:shadow-lg">
+                <i class="fa-solid fa-display"></i>
+                <span id="toggleBtnText">Mode Poster / Flyer</span>
+            </button>
+        </div>
+    </nav>
+
+    <main id="mainContainer" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 max-w-3xl space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+                    <i class="fa-solid fa-microchip"></i> Tugas Mandiri Pembelajaran Jarak Jauh
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                    Panduan & Contoh Konkret Portofolio <span class="text-emerald-400">Sistem Kendali</span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Halaman ini dibuat sebagai <strong>contoh standar pengerjaan tugas</strong>. Pelajari bagaimana mendefinisikan sistem kendali secara mandiri dan membedah studi kasus nyata yang berdampak langsung pada lingkungan sekitar, seperti <span class="text-emerald-300 font-medium">Sistem Kendali Penyaring Udara Otomatis</span> saat kabut asap.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-3 text-xs sm:text-sm">
+                    <a href="#contoh-master" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-eye"></i> Lihat Contoh Tugas Lengkap
+                    </a>
+                    <a href="#lembar-kerja" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-pen"></i> Coba Buat Draf Tugas Saya
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Task Instructions & Rubric -->
+        <section id="instruksi" class="space-y-6">
+            <div class="border-l-4 border-emerald-500 pl-4">
+                <h3 class="text-xl font-bold text-slate-900">1. Instruksi & Rubrik Tugas Siswa</h3>
+                <p class="text-sm text-slate-500">Pahami dua langkah utama tugas yang wajib kamu selesaikan dalam bentuk flyer/presentasi digital.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Task 1 Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">
+                        1
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mb-2">Tugas 1: Sintesis Definisi Sistem Kendali</h4>
+                    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                        Cari minimal 3 sumber literatur (Buku, Jurnal, atau Website Edukasi Resmi). Rangkum ketiga pengertian tersebut, lalu <strong>buat kesimpulan definisi Sistem Kendali dengan gaya bahasamu sendiri</strong>.
+                    </p>
+                    <ul class="text-xs space-y-2 text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Menyebutkan 3 judul/penulis literatur rujukan.</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Mengaitkan kata kunci: Input, Process, Output, & Control.</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Bahasa mudah dipahami & orisinal (bukan copy-paste penuh).</li>
+                    </ul>
+                </div>
+
+                <!-- Task 2 Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">
+                        2
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mb-2">Tugas 2: Bedah Sistem Kendali Nyata</h4>
+                    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                        Pilih 1 contoh aplikasi sistem kendali nyata yang sudah bermanfaat di dunia nyata. Bedah latar belakang lahirnya, mekanisme cara kerja 4 blok utamanya, serta perbandingan sebelum vs sesudah otomatisasi.
+                    </p>
+                    <ul class="text-xs space-y-2 text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-600"></i> Penjelasan 4 elemen: Sensor, Controller, Actuator, Feedback.</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-600"></i> Analisis kinerja: Kerja Manual vs Otomatis Sistem Kendali.</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-600"></i> Dampak nyata (Efisiensi, Respon Waktu, Kesehatan, Biaya).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Master Sample Showcase -->
+        <section id="contoh-master" class="space-y-8 bg-slate-100/70 p-6 sm:p-8 rounded-3xl border border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Contoh Acuan Jawaban (Master Sample)</span>
+                    <h3 class="text-2xl font-extrabold text-slate-900 mt-2">
+                        Studi Kasus: Sistem Kendali Penyaring & Monitor Kualitas Udara Ruangan Otomatis (Smart Air Quality Control System)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Dikembangkan sebagai solusi tanggap darurat bencana kabut asap dan pencemaran udara indoor.</p>
+                </div>
+                <span class="text-xs bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg self-start sm:self-center">
+                    <i class="fa-solid fa-user-graduate"></i> Contoh Karya Siswa Grade A+
+                </span>
+            </div>
+
+            <!-- PART 1: Literature Synthesis -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center gap-3 text-emerald-700">
+                    <i class="fa-solid fa-book-open text-xl"></i>
+                    <h4 class="font-bold text-lg text-slate-900">BAGIAN 1: Sintesis & Definisi Sistem Kendali Menurut Siswa</h4>
+                </div>
+                
+                <p class="text-xs text-slate-500">Siswa mencari 3 rujukan literatur dan merangkumnya menjadi kesimpulan pribadi:</p>
+
+                <div class="grid md:grid-cols-3 gap-4 text-xs">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-bookmark text-emerald-600"></i> Sumber 1: Ogata (2010)</div>
+                        <p class="text-slate-600 italic">"Sistem kendali adalah kombinasi dari beberapa komponen yang bekerja bersama-sama dan melakukan suatu perintah untuk menghasilkan respon output yang diinginkan."</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-bookmark text-emerald-600"></i> Sumber 2: Nise (2019)</div>
+                        <p class="text-slate-600 italic">"Sistem kontrol terdiri dari komponen subsistem dan proses yang dirancang untuk mendapatkan keluaran yang sesuai dengan masukan yang ditetapkan melalui umpan balik."</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-bookmark text-emerald-600"></i> Sumber 3: Kuo (2003)</div>
+                        <p class="text-slate-600 italic">"Sistem kendali merupakan kumpulan perangkat elektronik/mekanis yang mengatur, mengarahkan, atau memerintah perilaku perangkat lain agar mencapai performa stabil."</p>
+                    </div>
+                </div>
+
+                <!-- Student Final Synthesized Definition -->
+                <div class="bg-emerald-50 border-l-4 border-emerald-600 p-4 rounded-r-xl">
+                    <h5 class="font-bold text-emerald-900 text-sm mb-1">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i> Kesimpulan Definisi Versi Saya (Siswa):
+                    </h5>
+                    <p class="text-xs sm:text-sm text-emerald-950 font-medium leading-relaxed">
+                        "Sistem Kendali adalah susunan komponen (seperti sensor, prosesor, dan mesin/aktuator) yang bekerja secara berkesinambungan untuk mengukur kondisi nyata, membandingkannya dengan target yang diinginkan, dan melakukan penyesuaian otomatis agar sistem tetap berjalan aman, efisien, dan stabil tanpa perlu campur tangan manusia secara terus-menerus."
+                    </p>
+                </div>
+            </div>
+
+            <!-- PART 2: System Anatomy & Interactive Simulation -->
+            <div id="simulasi" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-3 text-emerald-700">
+                        <i class="fa-solid fa-sliders text-xl"></i>
+                        <h4 class="font-bold text-lg text-slate-900">BAGIAN 2: Anatomi Blok & Simulator Interaktif Sistem Kendali Udara</h4>
+                    </div>
+                    <span class="text-xs text-slate-500">Geser slider input kadar polusi untuk melihat reaksi otomatis sistem!</span>
+                </div>
+
+                <!-- Anatomy Diagram Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">1. Input / Sensor</span>
+                        <div class="font-bold text-slate-800 text-sm mt-1"><i class="fa-solid fa-smog text-amber-500"></i> Sensor PM2.5 / Dust</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Mendeteksi kadar partikel polusi kabut asap di udara (µg/m³).</p>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-xl border border-blue-200">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-blue-500">2. Controller / Prosesor</span>
+                        <div class="font-bold text-blue-900 text-sm mt-1"><i class="fa-solid fa-microchip text-blue-600"></i> Mikrokontroler / PID</div>
+                        <p class="text-[11px] text-blue-700 mt-1">Membandingkan batas setpoint (misal 35 µg/m³) & menghitung kecepatan kipas.</p>
+                    </div>
+                    <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">3. Output / Aktuator</span>
+                        <div class="font-bold text-emerald-900 text-sm mt-1"><i class="fa-solid fa-fan text-emerald-600"></i> Kipas HEPA Filter</div>
+                        <p class="text-[11px] text-emerald-700 mt-1">Menyaring udara beracun sesuai kecepatan instruksi prosesor.</p>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600">4. Feedback Loop</span>
+                        <div class="font-bold text-purple-900 text-sm mt-1"><i class="fa-solid fa-rotate text-purple-600"></i> Loop Umpan Balik</div>
+                        <p class="text-[11px] text-purple-700 mt-1">Sensor membaca ulang hasil penyaringan untuk penyesuaian terus-menerus.</p>
+                    </div>
+                </div>
+
+                <!-- LIVE INTERACTIVE SIMULATOR BOX -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 sm:p-6 text-white space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                        <h5 class="font-bold text-emerald-400 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-play-circle animate-pulse"></i> Simulator Live: Smart Air Purifier Control Loop
+                        </h5>
+                        <div class="flex items-center gap-2">
+                            <span id="systemStatusBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                Sistem Siap (Normal)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid lg:grid-cols-12 gap-6 items-center">
+                        <!-- Controls & Sensor Inputs (5 cols) -->
+                        <div class="lg:col-span-5 space-y-5 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label for="pmSlider" class="text-xs font-semibold text-slate-300">
+                                        Input Sensor Kualitas Udara (PM2.5):
+                                    </label>
+                                    <span id="pmValueText" class="text-sm font-extrabold text-amber-400">25 µg/m³</span>
+                                </div>
+                                <input id="pmSlider" type="range" min="5" max="300" value="25" oninput="updateSimulation()" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                                <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                                    <span>5 (Bersih)</span>
+                                    <span>50 (Sedang)</span>
+                                    <span>150 (Tidak Sehat)</span>
+                                    <span>300 (Bahaya Smog)</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700">
+                                    <span class="text-slate-400 block text-[10px]">Target Ideal (Setpoint)</span>
+                                    <span class="font-bold text-slate-200">&le; 35 µg/m³</span>
+                                </div>
+                                <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700">
+                                    <span class="text-slate-400 block text-[10px]">Sinyal Error Kontrol</span>
+                                    <span id="errorSignalText" class="font-bold text-emerald-400">0 µg/m³</span>
+                                </div>
+                            </div>
+
+                            <!-- Automatic Simulation Action Button -->
+                            <div class="pt-2 flex gap-2">
+                                <button onclick="triggerHazeSpike()" class="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-smog"></i> Simulasi Asap Mendadak Masuk
+                                </button>
+                                <button onclick="resetSimulation()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold transition">
+                                    <i class="fa-solid fa-rotate-right"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Visual Actuator Response & Fan Animation (7 cols) -->
+                        <div class="lg:col-span-7 flex flex-col md:flex-row items-center justify-around gap-6 bg-slate-800/40 p-4 rounded-xl border border-slate-700/60">
+                            <!-- Fan Actuator Display -->
+                            <div class="text-center space-y-2">
+                                <div class="relative w-28 h-28 mx-auto flex items-center justify-center bg-slate-900 rounded-full border-4 border-slate-700 shadow-inner">
+                                    <i id="fanIcon" class="fa-solid fa-fan text-5xl text-slate-500 animate-fan-off transition-all"></i>
+                                    <span id="fanSpeedBadge" class="absolute bottom-1 bg-emerald-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full">
+                                        OFF / 0%
+                                    </span>
+                                </div>
+                                <div class="text-xs">
+                                    <span class="text-slate-400">Status Kipas HEPA:</span>
+                                    <p id="fanStatusText" class="font-bold text-slate-200">Mode Siaga (Standby)</p>
+                                </div>
+                            </div>
+
+                            <!-- Real-time Chart -->
+                            <div class="w-full max-w-[280px] h-[160px]">
+                                <canvas id="simChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PART 3: Before vs After Breakdown (Manual vs Control System) -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="flex items-center gap-3 text-emerald-700 border-b border-slate-100 pb-3">
+                    <i class="fa-solid fa-code-compare text-xl"></i>
+                    <h4 class="font-bold text-lg text-slate-900">BAGIAN 3: Bedah Perubahan Kinerja (Manual vs Otomatis)</h4>
+                </div>
+
+                <!-- Story Narrative -->
+                <div class="prose prose-slate max-w-none text-xs sm:text-sm text-slate-600 leading-relaxed space-y-3">
+                    <p>
+                        <strong>Latar Belakang Lahirnya Sistem:</strong> Musim kabut asap yang berulang menyebabkan polusi udara indoor meningkat tanpa disadari oleh penghuni rumah/sekolah. Udara mengandung partikel berbahaya PM2.5 yang kasat mata namun merusak paru-paru. Sebelum adanya sistem kendali otomatis, pembersihan udara dilakukan secara manual.
+                    </p>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 uppercase font-bold border-b border-slate-200">
+                                <th class="p-3">Parameter Analisis</th>
+                                <th class="p-3 bg-red-50/50 text-red-900"><i class="fa-solid fa-hand text-red-500 mr-1"></i> Sebelum (Kerja Manual Manusia)</th>
+                                <th class="p-3 bg-emerald-50/50 text-emerald-900"><i class="fa-solid fa-robot text-emerald-600 mr-1"></i> Sesudah (Sistem Kendali Otomatis)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Deteksi Perubahan Udara</td>
+                                <td class="p-3 bg-red-50/20 text-slate-600">Lambat, mengandalkan bau asap atau penglihatan mata manusia (tidak akurat).</td>
+                                <td class="p-3 bg-emerald-50/20 text-slate-800 font-medium">Real-time (setiap detik) menggunakan sensor optik PM2.5 presisi tinggi.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Respon Tindakan (Kecepatan)</td>
+                                <td class="p-3 bg-red-50/20 text-slate-600">Memerlukan waktu 15–45 menit sampai seseorang sadar dan menyalakan penyaring secara manual.</td>
+                                <td class="p-3 bg-emerald-50/20 text-slate-800 font-medium">Sangat cepat (< 2 detik) kipas otomatis menyesuaikan putaran begitu kadar asap naik.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Efisiensi Daya & Komponen</td>
+                                <td class="p-3 bg-red-50/20 text-slate-600">Sering lupa dimatikan saat udara sudah bersih (boros listrik & filter cepat rusak).</td>
+                                <td class="p-3 bg-emerald-50/20 text-slate-800 font-medium">Daya dinamis; kipas pelan/mati otomatis saat udara kembali sehat. Hemat hingga 40%.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800">Konsistensi Kualitas Udara</td>
+                                <td class="p-3 bg-red-50/20 text-slate-600">Fluktuatif; kadang sangat kotor sebelum ada yang menyalakan alat.</td>
+                                <td class="p-3 bg-emerald-50/20 text-slate-800 font-medium">Stabil pada kisaran aman (< 35 µg/m³) sepanjang hari tanpa terputus.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PART 4: Impact Assessment -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center gap-3 text-emerald-700 border-b border-slate-100 pb-3">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
+                    <h4 class="font-bold text-lg text-slate-900">BAGIAN 4: Dampak Penerapan Sistem Kendali</h4>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 space-y-1">
+                        <div class="text-emerald-700 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-heart-pulse"></i> Kesehatan (Health)
+                        </div>
+                        <p class="text-slate-600">Menurunkan risiko ISPA dan iritasi mata hingga 70% di area dalam ruangan saat bencana kabut asap.</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 space-y-1">
+                        <div class="text-blue-700 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt"></i> Efisiensi Energi
+                        </div>
+                        <p class="text-slate-600">Menghemat pengeluaran daya listrik hingga 40% dibandingkan menjalankan kipas HEPA nonstop pada kecepatan tinggi.</p>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 space-y-1">
+                        <div class="text-amber-700 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-clock"></i> Respon Waktu
+                        </div>
+                        <p class="text-slate-600">Eliminasi keterlambatan respon manusia dari 30 menit menjadi reaksi otomatis kurang dari 2 detik.</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 space-y-1">
+                        <div class="text-purple-700 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-sack-dollar"></i> Biaya Operasional
+                        </div>
+                        <p class="text-slate-600">Memperpanjang umur pemakaian filter HEPA karena tidak terus-menerus disiksa pada beban maksimum.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Interactive Student Worksheet / Draft Builder -->
+        <section id="lembar-kerja" class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+            <div class="border-l-4 border-emerald-500 pl-4">
+                <h3 class="text-xl font-bold text-slate-900">4. Lembar Kerja Interaktif (Draf Tugas Siswa)</h3>
+                <p class="text-xs sm:text-sm text-slate-500">
+                    Siswa dapat menyusun draf ringkas tugas mereka di bawah ini untuk berlatih sebelum diketik ke dalam format flyer/presentasi akhir.
+                </p>
+            </div>
+
+            <form id="studentWorksheetForm" onsubmit="event.preventDefault(); generateStudentSummary();" class="space-y-6 text-xs sm:text-sm">
+                <!-- Task 1 Input -->
+                <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-3">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-emerald-600"></i> Draf Tugas 1: Sintesis Definisi
+                    </h4>
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Definisi Sistem Kendali Versi Saya Sendiri:</label>
+                        <textarea id="wsDefinition" rows="3" required placeholder="Tuliskan kesimpulan definisi berdasarkan pemahamanmu setelah membaca beberapa literatur..." class="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"></textarea>
+                    </div>
+                </div>
+
+                <!-- Task 2 Input -->
+                <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-4">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-gears text-indigo-600"></i> Draf Tugas 2: Anatomi Sistem Kendali Pilihanmu
+                    </h4>
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">Nama Sistem Kendali Pilihanmu:</label>
+                            <input type="text" id="wsSystemName" required placeholder="Contoh: Sistem Lampu Lalu Lintas Pintar / Hidroponik Otomatis" class="w-full p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">1. Sensor (Input):</label>
+                            <input type="text" id="wsSensor" required placeholder="Contoh: Sensor Kelembaban Tanah / Kamera Lalu Lintas" class="w-full p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">2. Controller (Prosesor):</label>
+                            <input type="text" id="wsController" required placeholder="Contoh: Arduino UNO / PLC / ESP32" class="w-full p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">3. Actuator (Output):</label>
+                            <input type="text" id="wsActuator" required placeholder="Contoh: Pompa Air Relay / Lampu LED" class="w-full p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Dampak Utama Sebelum vs Sesudah Otomatisasi:</label>
+                        <textarea id="wsImpact" rows="2" required placeholder="Jelaskan ringkas perbedaan efisiensi, waktu respon, atau kemudahannya..." class="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-check-circle"></i> Tinjau & Simpan Draf Saya
+                    </button>
+                    <button type="button" onclick="copyWorksheetToClipboard()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i> Salin Teks Draf
+                    </button>
+                </div>
+            </form>
+
+            <!-- Preview Box for Worksheet -->
+            <div id="worksheetPreview" class="hidden bg-emerald-50/70 border border-emerald-200 p-5 rounded-2xl space-y-3">
+                <h5 class="font-bold text-emerald-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice text-emerald-600"></i> Hasil Ringkasan Draf Tugas Anda:
+                </h5>
+                <div id="worksheetOutputText" class="text-xs text-slate-800 whitespace-pre-line font-mono bg-white p-4 rounded-xl border border-emerald-100">
+                    <!-- Dynamic Output -->
+                </div>
+                <button type="button" id="saveToCloudBtn" onclick="saveDraftToCloud()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Kirim ke Supabase (Cloud)
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION: Supabase Cloud Dashboard -->
+        <section id="dashboard" class="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-700 pb-4">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-database text-xl text-emerald-400"></i>
+                    <div>
+                        <h3 class="text-xl font-bold">5. Dashboard Kelas (Supabase)</h3>
+                        <p class="text-xs text-slate-400">Login siswa, simpan draf online, pantau pengumpulan, dan lihat data contoh secara real-time.</p>
+                    </div>
+                </div>
+                <span id="supabaseStatusBadge" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 self-start sm:self-center">
+                    <i class="fa-solid fa-plug-circle-xmark mr-1"></i> Belum dikonfigurasi
+                </span>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- AUTH PANEL -->
+                <div class="bg-slate-800/70 p-5 rounded-2xl border border-slate-700 space-y-4">
+                    <h4 class="font-bold text-sm flex items-center gap-2 text-emerald-400">
+                        <i class="fa-solid fa-user-lock"></i> Akun Siswa (Supabase Auth)
+                    </h4>
+
+                    <!-- Logged-out form -->
+                    <form id="authForm" onsubmit="event.preventDefault(); handleAuthSubmit();" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-medium text-slate-300 mb-1">Email</label>
+                            <input id="authEmail" type="email" required placeholder="siswa@sekolah.sch.id" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-300 mb-1">Password (min. 6 karakter)</label>
+                            <input id="authPassword" type="password" required minlength="6" placeholder="••••••" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" id="authLoginBtn" onclick="setAuthMode('login')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-to-bracket"></i> Masuk
+                            </button>
+                            <button type="submit" id="authSignupBtn" onclick="setAuthMode('signup')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-user-plus"></i> Daftar
+                            </button>
+                        </div>
+                        <p id="authMessage" class="text-[11px] text-slate-400"></p>
+                    </form>
+
+                    <!-- Logged-in info -->
+                    <div id="authUserPanel" class="hidden space-y-3 text-xs">
+                        <p class="text-slate-300">Masuk sebagai: <span id="authUserEmail" class="font-bold text-emerald-400"></span></p>
+                        <button type="button" onclick="handleSignOut()" class="bg-red-600/80 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- REALTIME FEED PANEL -->
+                <div class="bg-slate-800/70 p-5 rounded-2xl border border-slate-700 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-sm flex items-center gap-2 text-indigo-400">
+                            <i class="fa-solid fa-tower-broadcast"></i> Monitoring Pengumpulan (Realtime)
+                        </h4>
+                        <button type="button" onclick="loadSubmissions()" class="text-[11px] bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition">
+                            <i class="fa-solid fa-rotate"></i> Muat ulang
+                        </button>
+                    </div>
+                    <div id="realtimeFeed" class="space-y-2 max-h-64 overflow-y-auto text-xs">
+                        <p class="text-slate-500 italic">Belum ada data.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MASTER DATA PANEL -->
+            <div class="bg-slate-800/70 p-5 rounded-2xl border border-slate-700 space-y-3">
+                <h4 class="font-bold text-sm flex items-center gap-2 text-amber-400">
+                    <i class="fa-solid fa-layer-group"></i> Data Contoh / Master Sample (dari Supabase)
+                </h4>
+                <div id="masterDataList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                    <p class="text-slate-500 italic">Belum ada data.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- DIGITAL FLYER / PRESENTATION MODE OVERLAY (TOGGLEABLE VIEW) -->
+    <div id="flyerView" class="hidden fixed inset-0 bg-slate-950/90 z-50 overflow-y-auto p-4 sm:p-8 flex flex-col items-center">
+        <!-- Close / Toggle Floating Button -->
+        <button onclick="toggleViewMode()" class="fixed top-5 right-5 bg-white text-slate-900 font-bold px-4 py-2 rounded-full shadow-2xl z-50 flex items-center gap-2 hover:bg-emerald-400 transition">
+            <i class="fa-solid fa-xmark text-lg"></i>
+            <span>Kembali ke Mode Web Article</span>
+        </button>
+
+        <!-- FLYER POSTER CONTAINER (A4 / Presentation Aspect) -->
+        <div class="max-w-4xl w-full bg-slate-900 text-white rounded-3xl border border-slate-700 shadow-2xl p-6 sm:p-10 my-auto space-y-8 relative overflow-hidden">
+            <!-- Decorative Accent -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Flyer Header -->
+            <div class="text-center border-b border-slate-800 pb-6 space-y-2">
+                <span class="bg-emerald-500 text-slate-950 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-widest">
+                    Digital Presentation Flyer
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-black text-white tracking-tight">
+                    Sistem Kendali Udara Otomatis Tanggap Kabut Asap
+                </h2>
+                <p class="text-slate-400 text-xs sm:text-sm">Mata Pelajaran Pilihan: Sistem Kendali | Karya Siswa BDR</p>
+            </div>
+
+            <!-- Flyer Content Grid -->
+            <div class="grid sm:grid-cols-2 gap-6 text-xs">
+                <!-- Box 1: Definition -->
+                <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+                    <h3 class="font-bold text-emerald-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb"></i> 1. Sintesis Definisi
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed italic">
+                        "Sistem Kendali adalah kombinasi sensor, mikrokontroler, dan aktuator yang mengukur kondisi lingkungan nyata dan secara otomatis menyesuaikan kinerjanya tanpa bantuan manusia agar kondisi ideal tetap terjaga."
+                    </p>
+                </div>
+
+                <!-- Box 2: Anatomy -->
+                <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+                    <h3 class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-sitemap"></i> 2. Anatomi System
+                    </h3>
+                    <ul class="space-y-1.5 text-slate-300">
+                        <li><strong>Sensor (Input):</strong> Sensor Partikel PM2.5</li>
+                        <li><strong>Prosesor:</strong> Mikrokontroler PID Loop</li>
+                        <li><strong>Aktuator (Output):</strong> Kipas Purifier HEPA</li>
+                        <li><strong>Feedback:</strong> Pembacaan Ulang PM2.5 Realtime</li>
+                    </ul>
+                </div>
+
+                <!-- Box 3: Before vs After -->
+                <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+                    <h3 class="font-bold text-amber-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i> 3. Manual vs Otomatis
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        <strong>Manual:</strong> Lambat menyadari kabut asap, boros energi karena sering lupa dimatikan.<br>
+                        <strong>Otomatis:</strong> Respon cepat (< 2 detik), hemat listrik hingga 40%, udara dalam ruangan terjamin aman secara berkelanjutan.
+                    </p>
+                </div>
+
+                <!-- Box 4: Impacts -->
+                <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+                    <h3 class="font-bold text-teal-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-square-poll-vertical"></i> 4. Dampak Utama
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-center text-[11px]">
+                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-700">
+                            <span class="block font-bold text-emerald-400">70%</span>
+                            <span class="text-slate-400">Pencegahan ISPA</span>
+                        </div>
+                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-700">
+                            <span class="block font-bold text-teal-400">< 2 Detik</span>
+                            <span class="text-slate-400">Kecepatan Reaksi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-4 border-t border-slate-800 text-[11px] text-slate-500">
+                Template Acuan Tugas Siswa | Belajar Dari Rumah Tanggap Bencana Kabut Asap
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p><strong>Modul & Contoh Acuan Tugas Pembelajaran Jarak Jauh (BDR)</strong> - Mata Pelajaran Pilihan: Sistem Kendali.</p>
+            <p>Didesain secara interaktif agar siswa dapat memahami sintesis literatur dan analisis sistem kendali secara mandiri di rumah.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Global Simulation State
+        let chartInstance = null;
+        let simHistory = [25, 25, 25, 25, 25, 25, 25, 25, 25, 25];
+
+        // Initialize Chart.js on DOM Content Loaded
+        window.onload = function() {
+            initSimulationChart();
+            updateSimulation();
+            initSupabase();
+        };
+
+        // Initialize Live Chart
+        function initSimulationChart() {
+            const ctx = document.getElementById('simChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['-9s', '-8s', '-7s', '-6s', '-5s', '-4s', '-3s', '-2s', '-1s', 'Now'],
+                    datasets: [{
+                        label: 'Kadar PM2.5 (µg/m³)',
+                        data: simHistory,
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            min: 0,
+                            max: 300,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#94a3b8', font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Live Simulation Logic triggered by Slider or Spike Button
+        function updateSimulation() {
+            const slider = document.getElementById('pmSlider');
+            const pmValue = parseInt(slider.value);
+
+            // Update UI Labels
+            document.getElementById('pmValueText').innerText = pmValue + ' µg/m³';
+
+            const setpoint = 35;
+            const error = Math.max(0, pmValue - setpoint);
+            document.getElementById('errorSignalText').innerText = '+' + error + ' µg/m³';
+
+            const fanIcon = document.getElementById('fanIcon');
+            const fanBadge = document.getElementById('fanSpeedBadge');
+            const fanStatus = document.getElementById('fanStatusText');
+            const statusBadge = document.getElementById('systemStatusBadge');
+
+            let speedPercent = 0;
+            let statusText = '';
+            let fanAnimClass = 'animate-fan-off';
+            let chartColor = '#22c55e';
+
+            // Controller Logic Rules
+            if (pmValue <= 35) {
+                speedPercent = 0;
+                statusText = 'Udara Sehat (Standby / Off)';
+                fanAnimClass = 'animate-fan-off';
+                statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                statusBadge.innerText = 'Sistem Aman (Normal)';
+                chartColor = '#22c55e';
+            } else if (pmValue <= 100) {
+                speedPercent = 40;
+                statusText = 'Kipas Menyaring Berkecepatan Sedang';
+                fanAnimClass = 'animate-fan-slow';
+                statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30';
+                statusBadge.innerText = 'Tinjauan Polusi Sedang';
+                chartColor = '#f59e0b';
+            } else if (pmValue <= 200) {
+                speedPercent = 75;
+                statusText = 'Kipas Berputar Cepat (Penyaringan Tinggi)';
+                fanAnimClass = 'animate-fan-fast';
+                statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30';
+                statusBadge.innerText = 'Peringatan Polusi Tinggi!';
+                chartColor = '#f97316';
+            } else {
+                speedPercent = 100;
+                statusText = 'KIPAS MAKSIMUM! Mode Tanggap Kabut Asap';
+                fanAnimClass = 'animate-fan-fast';
+                statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse';
+                statusBadge.innerText = 'BAHAYA KABUT ASAP!';
+                chartColor = '#ef4444';
+            }
+
+            // Apply Fan Actuator visuals
+            fanIcon.className = 'fa-solid fa-fan text-5xl transition-all ' + fanAnimClass;
+            if (speedPercent === 0) {
+                fanIcon.classList.add('text-slate-500');
+            } else if (speedPercent <= 50) {
+                fanIcon.classList.add('text-amber-400');
+            } else {
+                fanIcon.classList.add('text-emerald-400');
+            }
+
+            fanBadge.innerText = speedPercent > 0 ? 'ON / ' + speedPercent + '%' : 'OFF / 0%';
+            fanStatus.innerText = statusText;
+
+            // Update Chart History Data
+            if (chartInstance) {
+                simHistory.shift();
+                simHistory.push(pmValue);
+                chartInstance.data.datasets[0].data = simHistory;
+                chartInstance.data.datasets[0].borderColor = chartColor;
+                chartInstance.data.datasets[0].backgroundColor = chartColor + '22';
+                chartInstance.update();
+            }
+        }
+
+        // Trigger Emergency Haze Spike Event
+        function triggerHazeSpike() {
+            const slider = document.getElementById('pmSlider');
+            slider.value = 240;
+            updateSimulation();
+        }
+
+        // Reset Simulation
+        function resetSimulation() {
+            const slider = document.getElementById('pmSlider');
+            slider.value = 25;
+            updateSimulation();
+        }
+
+        // Toggle View Mode (Interactive Web Article vs Digital Presentation Flyer)
+        function toggleViewMode() {
+            const flyerView = document.getElementById('flyerView');
+            const toggleBtnText = document.getElementById('toggleBtnText');
+
+            if (flyerView.classList.contains('hidden')) {
+                flyerView.classList.remove('hidden');
+                toggleBtnText.innerText = 'Mode Artikel Web';
+            } else {
+                flyerView.classList.add('hidden');
+                toggleBtnText.innerText = 'Mode Poster / Flyer';
+            }
+        }
+
+        // Generate Student Draft Summary from Worksheet
+        function generateStudentSummary() {
+            const def = document.getElementById('wsDefinition').value;
+            const name = document.getElementById('wsSystemName').value;
+            const sensor = document.getElementById('wsSensor').value;
+            const controller = document.getElementById('wsController').value;
+            const actuator = document.getElementById('wsActuator').value;
+            const impact = document.getElementById('wsImpact').value;
+
+            const summaryText = `
+==================================================
+DRAF TUGAS SISWA - MAPEL SISTEM KENDALI (BDR)
+==================================================
+
+[TUGAS 1: DEFINISI SISTEM KENDALI]
+Definisi Versi Saya:
+"${def}"
+
+[TUGAS 2: BEDAH SISTEM KENDALI NYATA]
+Nama Sistem: ${name}
+1. Sensor (Input)    : ${sensor}
+2. Controller        : ${controller}
+3. Actuator (Output) : ${actuator}
+
+Dampak & Perubahan Kinerja (Manual vs Otomatis):
+${impact}
+==================================================
+`;
+
+            const previewBox = document.getElementById('worksheetPreview');
+            const outputText = document.getElementById('worksheetOutputText');
+
+            outputText.innerText = summaryText;
+            previewBox.classList.remove('hidden');
+            previewBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Copy Worksheet Draft to Clipboard
+        function copyWorksheetToClipboard() {
+            const outputText = document.getElementById('worksheetOutputText');
+            if (!outputText.innerText || outputText.innerText.trim() === '') {
+                alert('Silakan isi form dan klik "Tinjau & Simpan Draf Saya" terlebih dahulu!');
+                return;
+            }
+
+            const textArea = document.createElement("textarea");
+            textArea.value = outputText.innerText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                alert('Draf tugas berhasil disalin ke clipboard! Siswa dapat menempelkannya ke dokumen presentasi.');
+            } catch (err) {
+                alert('Gagal menyalin otomatis, silakan blok dan salin teks secara manual.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // ============================================================
+        // SUPABASE INTEGRATION
+        // ============================================================
+        let supabaseClient = null;
+        let authMode = 'login';
+        let realtimeChannel = null;
+
+        // 1) Initialize client from supabase-config.js
+        function initSupabase() {
+            const cfg = window.SUPABASE_CONFIG || {};
+            const configured = cfg.url && cfg.anonKey &&
+                !cfg.url.includes('YOUR-PROJECT') && !cfg.anonKey.includes('YOUR-ANON');
+
+            if (!configured || !window.supabase) {
+                setSupabaseStatus('Belum dikonfigurasi', 'bg-slate-700 text-slate-300', 'fa-plug-circle-xmark');
+                return;
+            }
+
+            try {
+                supabaseClient = window.supabase.createClient(cfg.url, cfg.anonKey);
+                setSupabaseStatus('Terhubung ke Supabase', 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30', 'fa-plug-circle-check');
+
+                // Restore existing session, then react to auth changes
+                supabaseClient.auth.getSession().then(({ data }) => updateAuthUI(data.session));
+                supabaseClient.auth.onAuthStateChange((_event, session) => updateAuthUI(session));
+
+                loadMasterSamples();
+                loadSubmissions();
+                subscribeRealtime();
+            } catch (err) {
+                setSupabaseStatus('Gagal terhubung', 'bg-red-500/20 text-red-400 border border-red-500/30', 'fa-triangle-exclamation');
+            }
+        }
+
+        function setSupabaseStatus(text, classes, icon) {
+            const badge = document.getElementById('supabaseStatusBadge');
+            if (!badge) return;
+            badge.className = 'text-xs font-bold px-3 py-1.5 rounded-lg self-start sm:self-center ' + classes;
+            badge.innerHTML = '<i class="fa-solid ' + icon + ' mr-1"></i> ' + text;
+        }
+
+        // 2) Auth: toggle login / signup
+        function setAuthMode(mode) {
+            authMode = mode;
+            const loginBtn = document.getElementById('authLoginBtn');
+            const signupBtn = document.getElementById('authSignupBtn');
+            if (mode === 'signup') {
+                loginBtn.className = 'flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2';
+                signupBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2';
+            } else {
+                loginBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2';
+                signupBtn.className = 'flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2';
+            }
+        }
+
+        async function handleAuthSubmit() {
+            const msg = document.getElementById('authMessage');
+            if (!supabaseClient) { msg.innerText = 'Supabase belum dikonfigurasi. Isi supabase-config.js.'; return; }
+
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            msg.innerText = 'Memproses...';
+
+            const { error } = authMode === 'signup'
+                ? await supabaseClient.auth.signUp({ email, password })
+                : await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                msg.className = 'text-[11px] text-red-400';
+                msg.innerText = 'Gagal: ' + error.message;
+            } else {
+                msg.className = 'text-[11px] text-emerald-400';
+                msg.innerText = authMode === 'signup'
+                    ? 'Pendaftaran berhasil. Cek email verifikasi bila diaktifkan, lalu masuk.'
+                    : 'Berhasil masuk!';
+            }
+        }
+
+        async function handleSignOut() {
+            if (supabaseClient) await supabaseClient.auth.signOut();
+        }
+
+        function updateAuthUI(session) {
+            const form = document.getElementById('authForm');
+            const userPanel = document.getElementById('authUserPanel');
+            if (!form || !userPanel) return;
+
+            if (session && session.user) {
+                form.classList.add('hidden');
+                userPanel.classList.remove('hidden');
+                document.getElementById('authUserEmail').innerText = session.user.email || '(tanpa email)';
+            } else {
+                form.classList.remove('hidden');
+                userPanel.classList.add('hidden');
+            }
+        }
+
+        // 3) Save worksheet draft to Supabase
+        async function saveDraftToCloud() {
+            if (!supabaseClient) { alert('Supabase belum dikonfigurasi. Isi supabase-config.js terlebih dahulu.'); return; }
+
+            const { data: sessionData } = await supabaseClient.auth.getSession();
+            const session = sessionData ? sessionData.session : null;
+            if (!session) { alert('Silakan masuk (login) terlebih dahulu sebelum mengirim draf.'); return; }
+
+            const payload = {
+                user_id: session.user.id,
+                student_email: session.user.email,
+                definition: document.getElementById('wsDefinition').value.trim(),
+                system_name: document.getElementById('wsSystemName').value.trim(),
+                sensor: document.getElementById('wsSensor').value.trim(),
+                controller: document.getElementById('wsController').value.trim(),
+                actuator: document.getElementById('wsActuator').value.trim(),
+                impact: document.getElementById('wsImpact').value.trim()
+            };
+
+            if (!payload.definition || !payload.system_name) {
+                alert('Isi form minimal pada bagian Tugas 1 (definisi) dan nama sistem.');
+                return;
+            }
+
+            const { error } = await supabaseClient.from('student_submissions').insert(payload);
+            if (error) {
+                alert('Gagal menyimpan ke Supabase: ' + error.message);
+            } else {
+                alert('Draf berhasil dikirim ke Supabase!');
+                loadSubmissions();
+            }
+        }
+
+        // 4) Load submissions (SELECT)
+        async function loadSubmissions() {
+            if (!supabaseClient) return;
+            const feed = document.getElementById('realtimeFeed');
+            const { data, error } = await supabaseClient
+                .from('student_submissions')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(20);
+
+            if (error) {
+                feed.innerHTML = '<p class="text-red-400">Gagal memuat data: ' + error.message + '</p>';
+                return;
+            }
+            renderSubmissions(data);
+        }
+
+        function renderSubmissions(rows) {
+            const feed = document.getElementById('realtimeFeed');
+            if (!feed) return;
+            if (!rows || rows.length === 0) {
+                feed.innerHTML = '<p class="text-slate-500 italic">Belum ada draf yang dikumpulkan.</p>';
+                return;
+            }
+            feed.innerHTML = rows.map(r => `
+                <div class="bg-slate-900/80 border border-slate-700 rounded-lg p-3 space-y-1">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-emerald-400">${escapeHtml(r.system_name)}</span>
+                        <span class="text-[10px] text-slate-500">${new Date(r.created_at).toLocaleString('id-ID')}</span>
+                    </div>
+                    <p class="text-slate-400 text-[11px]">${escapeHtml(r.student_email || 'anonim')}</p>
+                    <p class="text-slate-300 text-[11px] line-clamp-3">${escapeHtml(r.definition)}</p>
+                </div>
+            `).join('');
+        }
+
+        // 5) Load master samples (SELECT)
+        async function loadMasterSamples() {
+            if (!supabaseClient) return;
+            const list = document.getElementById('masterDataList');
+            const { data, error } = await supabaseClient
+                .from('master_samples')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                list.innerHTML = '<p class="text-red-400">Gagal memuat data contoh: ' + error.message + '</p>';
+                return;
+            }
+            if (!data || data.length === 0) {
+                list.innerHTML = '<p class="text-slate-500 italic">Belum ada data contoh di tabel master_samples.</p>';
+                return;
+            }
+            list.innerHTML = data.map(m => `
+                <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-4 space-y-2">
+                    <h5 class="font-bold text-amber-400">${escapeHtml(m.title)}</h5>
+                    <p class="text-slate-400"><strong class="text-slate-300">Definisi:</strong> ${escapeHtml(m.definition || '-')}</p>
+                    <ul class="text-slate-300 space-y-0.5">
+                        <li><strong>Sensor:</strong> ${escapeHtml(m.sensor || '-')}</li>
+                        <li><strong>Controller:</strong> ${escapeHtml(m.controller || '-')}</li>
+                        <li><strong>Actuator:</strong> ${escapeHtml(m.actuator || '-')}</li>
+                        <li><strong>Feedback:</strong> ${escapeHtml(m.feedback || '-')}</li>
+                    </ul>
+                    <p class="text-slate-400"><strong class="text-slate-300">Dampak:</strong> ${escapeHtml(m.impact || '-')}</p>
+                </div>
+            `).join('');
+        }
+
+        // 6) Realtime subscription on INSERT
+        function subscribeRealtime() {
+            if (!supabaseClient || realtimeChannel) return;
+            realtimeChannel = supabaseClient
+                .channel('public:student_submissions')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'student_submissions' },
+                    (payload) => {
+                        loadSubmissions();
+                        const feed = document.getElementById('realtimeFeed');
+                        if (feed) feed.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    })
+                .subscribe();
+        }
+
+        // Utility: prevent HTML injection in rendered data
+        function escapeHtml(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

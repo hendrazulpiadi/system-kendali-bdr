@@ -2,7 +2,7 @@
 
 Aplikasi web interaktif **satu halaman** (single-page, HTML + Tailwind via CDN) untuk mata pelajaran pilihan **Sistem Kendali** dalam konteks **Belajar Dari Rumah (BDR)** saat bencana kabut asap.
 
-Halaman ini berfungsi sebagai **contoh acuan (master sample)** pengerjaan tugas, lengkap dengan **simulator interaktif** dan **lembar kerja siswa** yang bisa diisi, disalin, dan dikirim ke cloud (opsional).
+Halaman ini murni bersifat **contoh acuan (master sample)** dan **tatacara pengerjaan tugas**, lengkap dengan **simulator interaktif** dan **lembar kerja siswa** yang bisa diisi dan disalin. Tidak ada backend — siswa mengerjakan lalu menyalin drafnya ke dokumen presentasi mereka sendiri.
 
 > **Live demo:** https://hendrazulpiadi.github.io/system-kendali-bdr/
 
@@ -13,14 +13,14 @@ Halaman ini berfungsi sebagai **contoh acuan (master sample)** pengerjaan tugas,
 | Item | Keterangan |
 |------|------------|
 | Berkas utama | `index.html` |
-| Jenis | Web statis (HTML + Tailwind via CDN) + Supabase (opsional) |
+| Jenis | Web statis murni (HTML + Tailwind via CDN) |
 | Bahasa | Indonesia |
 | Studi kasus | Sistem Kendali Penyaring & Monitor Kualitas Udara Otomatis (*Smart Air Quality Control System*) |
 | Konteks | Tugas mandiri saat kabut asap (udara berbahaya → pembelajaran daring) |
-| Server dibutuhkan | Tidak untuk fitur inti. Supabase dibutuhkan untuk fitur cloud (opsional). |
+| Server dibutuhkan | Tidak. Cukup buka di browser. |
 | Hosting | GitHub Pages (gratis, otomatis dari repositori) |
 
-Tidak ada proses build dan tidak ada `package.json`. Semua logika inti berada di dalam `index.html`. Fitur cloud memakai konfigurasi `supabase-config.js`.
+Tidak ada proses build, tidak ada `package.json`, dan tidak ada backend. Seluruh logika berada di dalam `index.html`.
 
 ---
 
@@ -29,24 +29,14 @@ Tidak ada proses build dan tidak ada `package.json`. Semua logika inti berada di
 | Berkas | Fungsi |
 |--------|--------|
 | `index.html` | Halaman utama (seluruh UI + logika JavaScript). |
-| `supabase-config.js` | Menyimpan `url` + kunci publik Supabase (opsional). |
-| `supabase-schema.sql` | Skema tabel, kebijakan RLS, dan aktivasi Realtime. Jalankan di SQL Editor Supabase. |
-| `serve.ps1` | Server lokal sederhana (PowerShell) untuk pratinjau sebelum deploy. |
 | `.nojekyll` | Menandai GitHub Pages agar tidak memproses situs dengan Jekyll. |
+| `README.md` | Dokumentasi ini. |
 
 ---
 
-## 3. Menjalankan Secara Lokal
+## 3. Menjalankan
 
-**Cara cepat:** klik dua kali `index.html`.
-
-**Cara disarankan** (agar path relatif & Supabase berjalan normal):
-
-```powershell
-powershell -ExecutionPolicy Bypass -File serve.ps1
-```
-
-Lalu buka `http://localhost:8080/`.
+Cukup **klik dua kali `index.html`** untuk membukanya di browser.
 
 Sambungan internet dibutuhkan karena library dimuat dari CDN:
 
@@ -54,7 +44,6 @@ Sambungan internet dibutuhkan karena library dimuat dari CDN:
 - **Font Awesome 6.4** (ikon)
 - **Google Fonts — Inter** (tipografi)
 - **Chart.js** (grafik simulasi live)
-- **Supabase JS SDK** (fitur cloud — opsional)
 
 > Tanpa internet, layout masih tampil namun tanpa styling/ikon/grafik.
 
@@ -64,15 +53,15 @@ Sambungan internet dibutuhkan karena library dimuat dari CDN:
 
 Karena situs berupa HTML statis tanpa proses build, halaman ini bisa langsung dipublikasikan:
 
-1. Buat repositori baru di GitHub (mis. `sistem-kendali-bdr`).
-2. Unggah seluruh berkas proyek ini ke repositori tersebut (branch `main`).
+1. Buat repositori baru di GitHub (mis. `system-kendali-bdr`).
+2. Unggah `index.html`, `.nojekyll`, dan `README.md` ke repositori tersebut (branch `main`).
 3. Buka **Settings → Pages**.
 4. Pada **Build and deployment → Source**, pilih **Deploy from a branch**.
 5. Pilih branch **`main`** dan folder **`/ (root)`**, lalu **Save**.
 6. Tunggu 1–2 menit. Situs tersedia di:
    `https://<username>.github.io/<nama-repo>/`
 
-`index.html` otomatis dibuka saat pengunjung mengakses URL repositori. Berkas `.nojekyll` memastikan seluruh aset tersaji tanpa diproses Jekyll.
+`index.html` otomatis dibuka saat pengunjung mengakses URL repositori.
 
 ### Push dari terminal
 
@@ -98,53 +87,13 @@ git push -u origin main
    - Bagian 2: Anatomi 4 blok + **simulator live**.
    - Bagian 3: Perbandingan kinerja **Manual vs Otomatis** (tabel).
    - Bagian 4: Dampak penerapan (Kesehatan, Energi, Respon Waktu, Biaya).
-6. **Seksi 4: Lembar Kerja Interaktif** — form draf tugas siswa + preview + tombol salin + tombol kirim ke cloud.
-7. **Seksi 5: Dashboard Kelas (Supabase)** — login siswa, monitoring pengumpulan realtime, dan data contoh dari cloud.
-8. **Mode Poster/Flyer** — overlay presentasi digital yang bisa dibuka lewat tombol toggle.
-9. **Footer**.
+6. **Seksi 4: Lembar Kerja Interaktif** — form draf tugas siswa + preview + tombol salin ke clipboard.
+7. **Mode Poster/Flyer** — overlay presentasi digital yang bisa dibuka lewat tombol toggle.
+8. **Footer**.
 
 ---
 
-## 6. Integrasi Supabase (Opsional)
-
-Aplikasi mendukung backend **Supabase** untuk: menyimpan draf siswa, mengambil data contoh/master, login siswa, dan monitoring realtime. Bila tidak dikonfigurasi, semua fitur inti tetap berjalan (mode luring).
-
-### Langkah setup
-
-1. Buat project di [supabase.com](https://supabase.com).
-2. Buka **SQL Editor → New query**, tempel isi `supabase-schema.sql`, lalu **Run**.
-3. Buka **Project Settings → API**, salin **Project URL** dan **publishable/anon key**.
-4. Isi keduanya ke `supabase-config.js`:
-   ```js
-   window.SUPABASE_CONFIG = {
-       url: "https://xxxx.supabase.co",
-       anonKey: "sb_publishable_..."
-   };
-   ```
-5. Buka ulang halaman. Badge status akan berubah menjadi **Terhubung ke Supabase**.
-
-### Pengaturan saat hosting publik (GitHub Pages)
-
-Agar **login/sign-up** dan tautan verifikasi email bekerja di domain publik:
-
-1. Buka **Authentication → URL Configuration** di Supabase.
-2. Isi **Site URL** dengan `https://<username>.github.io/<nama-repo>/`.
-3. Tambahkan domain yang sama ke **Redirect URLs** (mis. `https://<username>.github.io/<nama-repo>/**`).
-
-> PENTING: hanya pakai **publishable/anon key**. Jangan pernah menaruh **service_role key** di `supabase-config.js` karena terekspos ke browser publik.
-
-### Tabel yang dipakai
-
-- `student_submissions` — draf tugas siswa (definisi, nama sistem, sensor, controller, actuator, dampak). Hanya siswa yang login boleh menulis; semua boleh membaca.
-- `master_samples` — data contoh yang ditampilkan di panel "Data Contoh / Master Sample".
-
-### Catatan keamanan (RLS)
-
-Row Level Security aktif pada kedua tabel: `SELECT` dibuka untuk publik, sedangkan `INSERT` hanya untuk pengguna terautentikasi (`auth.uid() = user_id`).
-
----
-
-## 7. Anatomi Sistem Kendali yang Dipelajari
+## 6. Anatomi Sistem Kendali yang Dipelajari
 
 Konsep inti yang diajarkan adalah 4 blok sistem kendali (umpan balik):
 
@@ -157,7 +106,7 @@ Konsep inti yang diajarkan adalah 4 blok sistem kendali (umpan balik):
 
 ---
 
-## 8. Logika Simulator (JavaScript)
+## 7. Logika Simulator (JavaScript)
 
 Simulator dikendalikan oleh *slider* PM2.5 (rentang 5–300 µg/m³) dengan aturan kontrol berikut:
 
@@ -177,29 +126,23 @@ Fungsi utama (`<script>` di bagian bawah `index.html`):
 - `toggleViewMode()` — beralih antara mode artikel web dan mode poster/flyer.
 - `generateStudentSummary()` — merangkum isi form lembar kerja menjadi teks draf.
 - `copyWorksheetToClipboard()` — menyalin draf ke clipboard.
-- `initSupabase()` — inisialisasi klien Supabase dari `supabase-config.js` dan memuat data.
-- `handleAuthSubmit()` / `handleSignOut()` / `updateAuthUI()` — autentikasi siswa.
-- `saveDraftToCloud()` — menyimpan draf ke tabel `student_submissions`.
-- `loadSubmissions()` / `loadMasterSamples()` — mengambil data dari Supabase.
-- `subscribeRealtime()` — langganan perubahan realtime (INSERT) pada tabel draf.
 
 Variabel state global: `chartInstance` dan `simHistory` (array 10 angka).
 
 ---
 
-## 9. Teknologi
+## 8. Teknologi
 
 - **HTML5** semantik
 - **Tailwind CSS** (via CDN + konfigurasi tema `brand`/`air` di `<head>`)
 - **JavaScript vanilla** (tanpa framework)
 - **Chart.js** untuk visualisasi real-time
-- **Supabase** (Postgres, Auth, Realtime) via SDK CDN — opsional
 - **Font Awesome** untuk ikon
 - Font **Inter**
 
 ---
 
-## 10. Tujuan Pembelajaran
+## 9. Tujuan Pembelajaran
 
 Setelah mempelajari halaman ini, siswa diharapkan mampu:
 
@@ -210,10 +153,9 @@ Setelah mempelajari halaman ini, siswa diharapkan mampu:
 
 ---
 
-## 11. Catatan Pengembangan
+## 10. Catatan Pengembangan
 
 - Seluruh kode ada di `index.html`; untuk mengubah data contoh, sunting langsung teks HTML-nya.
 - Untuk menambah aturan kontrol, modifikasi blok `if/else` pada `updateSimulation()`.
 - Untuk mengubah *setpoint* (saat ini `35`), cari variabel `const setpoint = 35;`.
-- Untuk menonaktifkan Supabase, cukup biarkan `supabase-config.js` pada nilai placeholder.
 - Setiap perubahan yang di-push ke branch `main` akan otomatis terbit ulang di GitHub Pages.

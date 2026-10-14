@@ -553,6 +553,9 @@
                             </button>
                         </div>
                         <p id="authMessage" class="text-[11px] text-slate-400"></p>
+                        <button type="button" onclick="resendConfirmation()" class="text-[11px] text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition">
+                            <i class="fa-solid fa-paper-plane"></i> Belum terima email verifikasi? Kirim ulang
+                        </button>
                     </form>
 
                     <!-- Logged-in info -->
@@ -953,26 +956,65 @@ ${impact}
             }
         }
 
+        // URL tujuan setelah konfirmasi email / redirect OAuth (halaman ini sendiri)
+        function getRedirectUrl() {
+            return window.location.origin + window.location.pathname;
+        }
+
         async function handleAuthSubmit() {
             const msg = document.getElementById('authMessage');
             if (!supabaseClient) { msg.innerText = 'Supabase belum dikonfigurasi. Isi supabase-config.js.'; return; }
 
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
+            msg.className = 'text-[11px] text-slate-400';
             msg.innerText = 'Memproses...';
 
             const { error } = authMode === 'signup'
-                ? await supabaseClient.auth.signUp({ email, password })
+                ? await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: { emailRedirectTo: getRedirectUrl() }
+                })
                 : await supabaseClient.auth.signInWithPassword({ email, password });
 
             if (error) {
                 msg.className = 'text-[11px] text-red-400';
-                msg.innerText = 'Gagal: ' + error.message;
+                if (/email not confirmed/i.test(error.message)) {
+                    msg.innerHTML = 'Email belum diverifikasi. Buka tautan pada email masuk (cek juga folder spam), atau klik "Kirim ulang email verifikasi" di bawah.';
+                } else if (/invalid login credentials/i.test(error.message)) {
+                    msg.innerText = 'Email atau password salah. Pastikan sudah mendaftar terlebih dahulu.';
+                } else {
+                    msg.innerText = 'Gagal: ' + error.message;
+                }
             } else {
                 msg.className = 'text-[11px] text-emerald-400';
                 msg.innerText = authMode === 'signup'
-                    ? 'Pendaftaran berhasil. Cek email verifikasi bila diaktifkan, lalu masuk.'
+                    ? 'Pendaftaran berhasil. Cek email masuk untuk tautan verifikasi (cek juga folder spam), lalu klik "Masuk".'
                     : 'Berhasil masuk!';
+            }
+        }
+
+        // Kirim ulang email verifikasi
+        async function resendConfirmation() {
+            const msg = document.getElementById('authMessage');
+            if (!supabaseClient) { msg.innerText = 'Supabase belum dikonfigurasi. Isi supabase-config.js.'; return; }
+            const email = document.getElementById('authEmail').value.trim();
+            if (!email) { msg.className = 'text-[11px] text-amber-400'; msg.innerText = 'Isi kolom email terlebih dahulu.'; return; }
+
+            msg.className = 'text-[11px] text-slate-400';
+            msg.innerText = 'Mengirim ulang...';
+            const { error } = await supabaseClient.auth.resend({
+                type: 'signup',
+                email,
+                options: { emailRedirectTo: getRedirectUrl() }
+            });
+            if (error) {
+                msg.className = 'text-[11px] text-red-400';
+                msg.innerText = 'Gagal kirim ulang: ' + error.message;
+            } else {
+                msg.className = 'text-[11px] text-emerald-400';
+                msg.innerText = 'Email verifikasi dikirim ulang ke ' + email + '. Cek inbox/spam.';
             }
         }
 
